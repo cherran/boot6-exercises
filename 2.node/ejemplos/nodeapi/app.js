@@ -7,6 +7,10 @@ var bodyParser = require('body-parser');
 
 var app = express();
 
+// cargamos el conector a la base de datos (mongoose)
+// no lo asigno a ninguna variable ya que unicamente quiero que se ejecute
+require('./lib/connectMongoose');
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 // app.set('view engine', 'ejs');
@@ -29,6 +33,7 @@ app.use('/saludo', function (req, res, next) {
   res.send('hola'); // devuelvo la petición
 })
 
+// middleware vacío
 app.use('/', function (req, res, next) {
   // Si un middleware no devuelve una respuesta debe llamar al siguiente middleware (next())
   next();
@@ -39,6 +44,9 @@ app.use('/', function (req, res, next) {
 // establecemos un middleware determinado (route) que responda a nuestra petición
 app.use('/', require('./routes/index'));
 app.use('/users', require('./routes/users'));
+
+// Rutas del APIv1
+app.use('/apiv1/agentes', require('./routes/apiv1/agentes'));
 
 // aquí está mejor puesto
 app.use(express.static(path.join(__dirname, 'public'))); // para todo lo que haya en la carpeta public lo sirva como ficheros estáticos
