@@ -62,7 +62,7 @@ db.agentes.update( { _id: ObjectId("5a25ac955879c84ee9ebe0c8") }, { $set: {name:
 
 ### Delete database/collection
 ```
-drop db.collection
+db.collection.drop()
 ```
 
 ### Create index
