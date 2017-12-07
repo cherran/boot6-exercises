@@ -12,27 +12,55 @@ var app = require('../app');
 var debug = require('debug')('nodeapi:server');
 var http = require('http');
 
+const cluster = require('cluster');
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3001');
+var port = normalizePort(process.env.PORT || '7000');
 app.set('port', port);
 
-/**
- * Create HTTP server.
- */
-
-var server = http.createServer(app);
 
 /**
- * Listen on provided port, on all network interfaces.
+ * Control de cluster ////////////////////////////////////////////////////////////////////
  */
+if (cluster.isMaster) {
+  const numCPUs = require('os').cpus().length;
 
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
+  for (let i =  0; i < numCPUs; i++){
+    cluster.fork();
+    var server = http.createServer(app);
+  }
+} else { // soy un clon!!
+  /**
+   * Create HTTP server.
+   */
+
+  var server = http.createServer(app);
+
+  /**
+   * Listen on provided port, on all network interfaces.
+   */
+
+  server.listen(port);
+  server.on('error', onError);
+  server.on('listening', onListening);
+
+}
+
+// al arrancar un worker...
+cluster.on('online', function(worker) {
+  console.log('Worker ' + worker.id +
+  ' is online with pid ' + worker.process.pid);
+});
+  
+// al terminar un worker...
+cluster.on('exit', function(worker, code, signal) {
+  console.log('worker ' + worker.process.pid + ' died');
+  cluster.fork();
+});
+
 
 /**
  * Normalize a port into a number, string, or false.
