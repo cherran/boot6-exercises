@@ -12,7 +12,7 @@ app.get('/', (req, res, next) => {
 const io = require('socket.io')(server);
 
 io.on('connection', (socket) => {
-  console.log('COnexión establecida!!');
+  console.log('Conexión establecida!!');
   socket.on('chat message', (msg) => {
     console.log('message: ' + msg);
     io.emit('chat message', msg);
