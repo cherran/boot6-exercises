@@ -1,35 +1,28 @@
 'use strict';
 
-var express = require('express');
-var router = express.Router();
-const basic = require('basic-auth');
-
+const express = require('express');
+const router = express.Router();
+const basicAuth = require('../../lib/basicAuth');
+const jwtAuth = require('../../lib/jwtAuth');
 
 // cargar el modelo de Agente
 const Agente = require('../../models/Agente');
 
-// Bashic auth
-router.use((req, res, next) => {
-  const user = basic(req);
+// Basic auth para todas las rutas definidas en el router
+// router.use(basicAuth(
+//   process.env.BASIC_AUTH_USER,
+//   process.env.BASIC_AUTH_PASSWORD));
 
-  // buscar en la base de datos el usuario user.name
-  // y comprobar la password
+// JWT auth
+router.use(jwtAuth());
 
-  if (!user || user.name !== 'admin' || user.pass !== '1234') {
-    // responder que necesito credenciales
-    res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
-    res.sendStatus(401);
-    return;
-  }
-  next();
-});
-
-
-+/**
- + * GET /agentes
- + * Obtener una lista de agentes
- + */
- router.get('/', async (req, res, next) => {
+/**
+  * GET /agentes
+  * Obtener una lista de agentes
+  */
+router.get('/', async (req, res, next) => {
+// Si quisiésemos poner basic auth sólo en esta ruta
+// router.get('/', basicAuth('admin', '1234'), async (req, res, next) => {  
   try {
     const name = req.query.name;
     const age = req.query.age;

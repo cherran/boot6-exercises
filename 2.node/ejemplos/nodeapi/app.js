@@ -48,6 +48,11 @@ app.use('/users', require('./routes/users'));
 // Rutas del APIv1
 app.use('/apiv1/agentes', require('./routes/apiv1/agentes'));
 
+// login (JWT)
+app.use('/apiv1/authenticate', require('./routes/apiv1/authenticate'));
+
+
+
 // aquí está mejor puesto
 app.use(express.static(path.join(__dirname, 'public'))); // para todo lo que haya en la carpeta public lo sirva como ficheros estáticos
 
@@ -63,21 +68,41 @@ app.use(function(req, res, next) {
 
 // err = new Error('hgsadhgsagjhfwgf'); algún middleware crea un error así y el siguiente middleware lo captura
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function(err,req, res, next) {
   // errores de validación (express-validator)
   if(err.array) {
     err.status = 422; // status code 422 --> error de validación
     const errInfo = err.array({ onlyFirstError: true})[0];
-    err.message = `Not valid - ${errInfo.param} ${errInfo.msg}`
+    err.message = 
+    // err.message = isApi(req) ?
+    // { message: 'Not valid', errors: 
+    
+    // err.mapped() } : // para peticiones de APIs
+    `Not valid - ${errInfo.param} ${errInfo.msg}`; // para otras peticiones
   }
+  console.log('REQUESTTT:', req.originalURL)
   
+  res.status(err.status || 500);
+
+  // if (isApi(req)) {
+  //   res.json( {success: false, error: err.message});
+  //   return;
+  // }
+
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
   // render the error page
-  res.status(err.status || 500);
   res.render('error');
 });
+
+// TODO arreglar esto!
+
+// function isApi(req) {
+//   // /apiv1 en la primera posición de la ruta definida en la URL
+//   console.log(req.originalURL);
+//   return req.originalURL.indexOf('/apiv1' == 0);
+// }
 
 module.exports = app;

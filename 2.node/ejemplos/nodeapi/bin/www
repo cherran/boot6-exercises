@@ -4,9 +4,14 @@
  * Module dependencies.
  */
 
+// Carga las variables de entorno definidas en el archivo .env de la raíz del proyecto
+require('dotenv').config();
+
+
 var app = require('../app');
 var debug = require('debug')('nodeapi:server');
 var http = require('http');
+
 
 /**
  * Get port from environment and store in Express.
