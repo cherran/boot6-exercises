@@ -14,6 +14,19 @@ const agenteSchema = mongoose.Schema({
 // mayúscula y pluralizando el nombre (Agente --> agentes). Si queremos ponerlo manualmente:
 // const agenteSchema = mongoose.Schema({...}, { collection: "agents" });
 
+// Creamos un método estático
+agenteSchema.statics.list = function(filters, limit, skip, sort, fields) {
+  // obtenemos la query sin ejecutarla
+  const query = Agente.find(filters);
+  query.limit(limit);
+  query.skip(skip);
+  query.sort(sort)
+  query.select(fields);
+  // ejecutamos la query y devolvemos una promesa
+  return query.exec();
+}
+
+
 // después creamos el modelo
 const Agente = mongoose.model('Agente', agenteSchema); 
 
