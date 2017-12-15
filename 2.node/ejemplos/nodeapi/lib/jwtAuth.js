@@ -26,7 +26,7 @@ module.exports = () => {
         return;
       }
 
-      console.log(decoded);
+      console.log('Decoded token:', decoded);
       // el token es válido, continuar
       // lo guardamos en el request para los siguientes middlewares
       req.userId = decoded._id;
