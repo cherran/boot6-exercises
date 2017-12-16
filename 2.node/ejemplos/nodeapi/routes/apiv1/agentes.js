@@ -21,20 +21,20 @@ router.use(jwtAuth());
   * Obtener una lista de agentes
   */
 router.get('/', async (req, res, next) => {
-// Si quisiésemos poner basic auth sólo en esta ruta
-// router.get('/', basicAuth('admin', '1234'), async (req, res, next) => {  
+  // buena idea utilizar try-catch dentro de una función async para capturar errores en las funciones await
   try {
+    // se deberían introducir validaciones con express validator
     const name = req.query.name;
     const age = req.query.age;
-    const limit = parseInt(req.query.limit); // Number(str)
-    const skip = parseInt(req.query.skip);
+    const limit = parseInt(req.query.limit);
+    const skip = parseInt(req.query.skip)
     const sort = req.query.sort;
-    const fields = req.query.fields;
+    const fields = req.query.fields; 
 
-    // creo el filtro vacio
+    // creo el filtro vacío
     const filter = {};
 
-    if (name) {
+    if(name) {
       filter.name = name;
     }
 
@@ -42,23 +42,24 @@ router.get('/', async (req, res, next) => {
       filter.age = age;
     }
 
-    const rows = await Agente.list(filter, limit, skip, sort, fields);
+    const rows = await Agente.list(filter, limit, skip, sort, fields); // el exec() de la query nos la devuelve en forma de promesa
     res.json({ success: true, result: rows });
-  } catch(err) {
+  } catch (err) {
     next(err);
   }
 });
+
 
 /**
  * GET /agentes:id
  * Obtener un agente
  */
 router.get('/:id', async (req, res, next) => {
-  try {
   const _id = req.params.id;
-  const agente = await Agente.findOne({ _id: _id }).exec();
-  res.json({ success: true, result: agente });
-  } catch(err) {
+  try {
+    const agente = await Agente.findOne({ _id: _id }); // _id: _id === _id
+    res.json({ success: true, result: agente });
+  } catch (err) {
     next(err);
   }
 });
@@ -82,20 +83,23 @@ router.post('/', (req, res, next) => {
   })
 });
 
+
 /**
-+ * PUT /agentes
-+ * Actualiza un agente
-+ */
+ * PUT /agentes
+ * Actualiza un agente
+ */
 router.put('/:id', async (req, res, next) => {
   try {
     const _id = req.params.id;
     const data = req.body;
-    const agenteActualizado = await Agente.findOneAndUpdate({ _id: _id}, data, { new: true }).exec();
+    // { new: true }: para que devuelva el nuevo agente editado, y no el antiguo que ha sido editado
+    const agenteActualizado = await Agente.findOneAndUpdate({ _id: _id }, data, { new: true }).exec();
     res.json({ success: true, result: agenteActualizado });
-  } catch(err) {
+  } catch (err) {
     next(err);
   }
 });
+
 
 /**
  * DELETE /agentes
@@ -104,12 +108,11 @@ router.put('/:id', async (req, res, next) => {
 router.delete('/:id', async (req, res, next) => {
   try {
     const _id = req.params.id;
-    await Agente.remove({ _id: _id }).exec();
-    res.json({ success: true });
-  } catch(err) {
+    await Agente.remove({_id}).exec();
+    res.json({ success: true});
+  } catch (err) {
     next(err);
   }
 });
-
   
 module.exports = router;
