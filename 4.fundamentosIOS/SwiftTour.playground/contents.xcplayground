@@ -6,5 +6,6 @@
         <page name='structs'/>
         <page name='Protocols&amp;Extensions'/>
         <page name='Classes'/>
+        <page name='HighLevelFunctionsAndClosures'/>
     </pages>
 </playground>
