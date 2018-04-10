@@ -63,10 +63,6 @@ class ImageViewController: UIViewController {
 //    }
     
     
-    var downloadOperation1: DownloadImgOperation!
-    var downloadOperation2: DownloadImgOperation!
-    var downloadOperation3: DownloadImgOperation!
-    var downloadOperation4: DownloadImgOperation!
     
     
     //    "http://c8.alamy.com/comp/KA3NBR/expo92-district-in-seville-sevilla-spain-white-bioclimatic-sphere-KA3NBR.jpg"
@@ -80,59 +76,64 @@ class ImageViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        downloadOperation1 = DownloadImgOperation(urlString: "http://c8.alamy.com/comp/KA3NBR/expo92-district-in-seville-sevilla-spain-white-bioclimatic-sphere-KA3NBR.jpg")
-        
-        downloadOperation1.imageClosure = {(success: Bool, image: UIImage?, error: Error?) in
-            if success {
-                self.img1 = image!
-            } else {
-                print(error!)
-            }
-        }
-        
-        
-        downloadOperation2 = DownloadImgOperation(urlString: "https://www.ecestaticos.com/image/clipping/939/56c9f8853cafb0265da40eb3478269a4/expo.jpg")
-        
-        downloadOperation2.imageClosure = { [unowned self] (success, image, error) in
-            if (success) {
-                self.img2 = image!
-            } else {
-                print(error!)
-            }
-        }
-
-        
-        downloadOperation3 = DownloadImgOperation(urlString: "http://www.hanedanrpg.com/photos/hanedanrpg/12/55932.jpg")
-        
-        downloadOperation3.imageClosure = { [unowned self] (success, image, error) in
-            if (success) {
-                self.img3 = image!
-            } else {
-                print(error!)
-            }
-        }
-        
-        
-        downloadOperation4 = DownloadImgOperation(urlString: "http://www.alpha-exposiciones.com/wp-content/uploads/2018/03/marathonweek_expo15_mm-106_r1.jpg")
-        
-        downloadOperation4.imageClosure = { [unowned self] (success, image, error) in
-            if (success) {
-                self.img4 = image!
-            } else {
-                print(error!)
-            }
-        }
-
-        
-        
-        
     }
     
     
-    
+    func giveMeDownloadOperationForIndex(index: Int) -> DownloadImgOperation {
+        var urlString = ""
+        // var image = UIImage()
+        
+        switch index {
+            case 1:
+                urlString = "http://c8.alamy.com/comp/KA3NBR/expo92-district-in-seville-sevilla-spain-white-bioclimatic-sphere-KA3NBR.jpg"
+            
+            case 2:
+                urlString = "https://www.ecestaticos.com/image/clipping/939/56c9f8853cafb0265da40eb3478269a4/expo.jpg"
+            
+            case 3:
+                urlString = "http://www.hanedanrpg.com/photos/hanedanrpg/12/55932.jpg"
+            
+            case 4:
+                urlString = "http://www.alpha-exposiciones.com/wp-content/uploads/2018/03/marathonweek_expo15_mm-106_r1.jpg"
+            
+            default:
+                urlString = ""
+        }
+        
+        // Creo la DownloadImgOperation con el string de la URL de la imagen
+        let downloadOperation = DownloadImgOperation(urlString: urlString)
+        
+        // Añado la closure de la operación de descarga (lo que se hace con la imagen descargada)
+        downloadOperation.imageClosure = { success, image, error in
+            if (success) {
+                switch index {
+                    case 1:
+                        self.img1 = image!
+                    
+                    case 2:
+                        self.img2 = image!
+                    
+                    case 3:
+                        self.img3 = image!
+                    
+                    default:
+                        self.img4 = image!
+                    }
+                
+            } else {
+                print(error!)
+            }
+        }
+        
+        return downloadOperation
+    }
 
     @IBAction func downloadImage(_ sender: Any) {
+        
+        let downloadOperation1 = self.giveMeDownloadOperationForIndex(index: 1)
+        let downloadOperation2 = self.giveMeDownloadOperationForIndex(index: 2)
+        let downloadOperation3 = self.giveMeDownloadOperationForIndex(index: 3)
+        let downloadOperation4 = self.giveMeDownloadOperationForIndex(index: 4)
         
         let button = sender as! UIButton
         
