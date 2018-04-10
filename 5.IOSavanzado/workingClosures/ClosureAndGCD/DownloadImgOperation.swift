@@ -13,6 +13,12 @@ class DownloadImgOperation: Operation {
     let urlString: String
     var imageClosure: ((Bool, UIImage?, Error?) -> Void)?
     
+    // "Chapuza" para que la DownloadImageOperation no acabe antes de que la imagen se haya descargado
+    var end = false
+    override var isFinished: Bool {
+        return end
+    }
+    
     init(urlString: String) {
         self.urlString = urlString
         super.init()
@@ -23,13 +29,23 @@ class DownloadImgOperation: Operation {
         if let endClosure = imageClosure {
             let url = URL(string: urlString)
             
-            do {
-                let imgData = try Data.init(contentsOf: url!) // Heavy task
-                endClosure(true, UIImage(data: imgData)!, nil)
-            } catch {
-                endClosure(false, nil, error)
-            }
+            let dataTask = URLSession.shared.dataTask(with: url!, completionHandler: // Utilizo la URLSession por defecto
+               { (data, urlResponse, error) in
+                    if let imgData = data {
+                        endClosure(true, UIImage(data: imgData), nil)
+                    } else {
+                        endClosure(false, nil, error)
+                    }
+                
+                // "Chapuza" para que la DownloadImageOperation no acabe antes de que la imagen se haya descargado
+                self.willChangeValue(forKey: "isFinished") // KVO.
+                self.end = true
+                _ = self.isFinished
+                self.didChangeValue(forKey: "isFinished")   // KVO
+            })
+            
+            // Arranco la tarea
+            dataTask.resume()
         }
-        
     }
 }
