@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14133" systemVersion="17E199" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Note" representedClassName="Note" syncable="YES">
+        <attribute name="creationDate" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="text" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="photo" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="PhotoContainer" inverseName="note" inverseEntity="PhotoContainer" syncable="YES"/>
+        <fetchIndex name="byDate">
+            <fetchIndexElement property="creationDate" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byText">
+            <fetchIndexElement property="text" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="PhotoContainer" representedClassName="PhotoContainer" syncable="YES">
+        <attribute name="imageData" attributeType="Binary" allowsExternalBinaryDataStorage="YES" syncable="YES"/>
+        <relationship name="note" maxCount="1" deletionRule="Nullify" destinationEntity="Note" inverseName="photo" inverseEntity="Note" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Note" positionX="-344" positionY="-162" width="128" height="88"/>
+        <element name="PhotoContainer" positionX="-36" positionY="-57" width="128" height="75"/>
+    </elements>
+</model>
