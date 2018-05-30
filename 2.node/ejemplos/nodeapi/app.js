@@ -74,20 +74,18 @@ app.use(function(err,req, res, next) {
     err.status = 422; // status code 422 --> error de validación
     const errInfo = err.array({ onlyFirstError: true})[0];
     err.message = 
-    // err.message = isApi(req) ?
-    // { message: 'Not valid', errors: 
-    
-    // err.mapped() } : // para peticiones de APIs
-    `Not valid - ${errInfo.param} ${errInfo.msg}`; // para otras peticiones
+    err.message = isApi(req) ?
+      { message: 'Not valid', errors: err.mapped() } : // para peticiones de APIs
+      `Not valid - ${errInfo.param} ${errInfo.msg}`; // para otras peticiones
   }
   console.log('REQUESTTT:', req.originalURL)
   
   res.status(err.status || 500);
 
-  // if (isApi(req)) {
-  //   res.json( {success: false, error: err.message});
-  //   return;
-  // }
+  if (isApi(req)) {
+    res.json( {success: false, error: err.message});
+    return;
+  }
 
   // set locals, only providing error in development
   res.locals.message = err.message;
@@ -97,12 +95,11 @@ app.use(function(err,req, res, next) {
   res.render('error');
 });
 
-// TODO arreglar esto!
 
-// function isApi(req) {
-//   // /apiv1 en la primera posición de la ruta definida en la URL
-//   console.log(req.originalURL);
-//   return req.originalURL.indexOf('/apiv1' == 0);
-// }
+function isApi(req) {
+  // /apiv1 en la primera posición de la ruta definida en la URL
+  console.log(req.originalURL);
+  return req.originalURL.indexOf('/apiv') === 0;
+}
 
 module.exports = app;
